@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pocha Fast & Pro</title>
+    <style>
+        :root {
+            --verde-tapete: #1a4a2e;
+            --verde-claro: #2d7a4d;
+            --oro: #f1c40f;
+            --blanco: #ecf0f1;
+        }
+
+        /* Ajuste global para que nada se salga del contenedor */
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle, var(--verde-claro) 0%, var(--verde-tapete) 100%);
+            color: var(--blanco); margin: 0; padding: 10px;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+
+        .container { width: 100%; max-width: 500px; }
+
+        .card {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px; padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+            width: 100%; /* Asegura que no exceda el container */
+        }
+
+        h1 { color: var(--oro); text-align: center; margin: 10px 0; text-shadow: 2px 2px 4px #000; }
+
+        .input-group { width: 100%; margin-bottom: 15px; text-align: left; }
+        
+        /* Estilo corregido para inputs */
+        input[type="text"], input[type="number"], select {
+            width: 100%; 
+            padding: 12px; 
+            margin: 5px 0; 
+            border-radius: 8px; 
+            border: none; 
+            background: rgba(255,255,255,0.9); 
+            font-size: 1rem;
+            color: #000;
+            display: block;
+        }
+
+        .info-header {
+            background: #fff; color: #000; padding: 10px;
+            border-radius: 10px; text-align: center; margin-bottom: 15px; font-weight: bold;
+        }
+
+        .player-box {
+            background: rgba(255,255,255,0.1); padding: 10px;
+            border-radius: 12px; margin-bottom: 10px;
+            border-left: 5px solid transparent;
+        }
+        .player-box.pending { border-left-color: #e74c3c; }
+        .player-box.done { border-left-color: #27ae60; background: rgba(39, 174, 96, 0.1); }
+
+        .controls { display: flex; align-items: center; justify-content: space-around; margin-top: 10px; }
+
+        .stepper { display: flex; align-items: center; background: #333; border-radius: 8px; overflow: hidden; }
+        .stepper button { 
+            background: #444; color: white; border: none; padding: 10px; 
+            font-size: 1.2rem; cursor: pointer; width: 45px;
+        }
+        .stepper span { width: 60px; text-align: center; font-weight: bold; font-size: 1.1rem; }
+
+        .btn-plus5 {
+            background: var(--oro); color: black; border: none; 
+            padding: 10px; border-radius: 8px; font-weight: bold; width: 75px;
+        }
+
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.75rem; color: white; }
+        .history-table th, .history-table td { border: 1px solid rgba(255,255,255,0.2); padding: 5px; text-align: center; }
+        .history-table th { background: var(--oro); color: black; }
+
+        .hidden { display: none; }
+        button.main-btn {
+            width: 100%; padding: 15px; background: var(--oro); 
+            color: black; font-weight: bold; border-radius: 8px; border: none;
+            cursor: pointer; margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌞 La Pocha</h1>
+
+    <div id="setup" class="card">
+        <div class="input-group">
+            <label style="color:var(--oro); font-weight:bold;">Nº Jugadores:</label>
+            <input type="number" id="numJug" value="4" min="3" max="8" onchange="dibujarNombres()">
+        </div>
+        <div class="input-group">
+            <label style="color:var(--oro); font-weight:bold;">Mazo:</label>
+            <select id="mazo">
+                <option value="32">32 cartas (quitar 2s y 4s)</option>
+                <option value="36">36 cartas (quitar 2s)</option>
+                <option value="40" selected>40 cartas</option>
+                <option value="48">48 cartas</option>
+            </select>
+        </div>
+        <div id="inputsNombres" class="input-group"></div>
+        <button class="main-btn" onclick="empezar()">EMPEZAR PARTIDA</button>
+    </div>
+
+    <div id="game" class="hidden">
+        <div id="headerRonda" class="info-header"></div>
+        
+        <div class="card" style="padding:10px; text-align:center; margin-bottom:15px;">
+            <label style="color:var(--oro); font-weight: bold; font-size: 1.1rem;">🟡 ¿ES OROS? </label>
+            <input type="checkbox" id="esOros" onchange="renderRonda()">
+        </div>
+
+        <div id="listaJugadores"></div>
+        
+        <button class="main-btn" onclick="intentarSiguiente()" style="background: var(--blanco);">SIGUIENTE RONDA →</button>
+    </div>
+
+    <div id="final" class="card hidden">
+        <h2 style="color:var(--oro); text-align:center;">🏆 Resultados</h2>
+        <div id="tablaFinal" style="overflow-x: auto;"></div>
+        <button class="main-btn" onclick="location.reload()">NUEVA PARTIDA</button>
+    </div>
+</div>
+
+<script>
+    let db = { 
+        rondaIdx: 0, 
+        jugadores: [], 
+        rondas: [], 
+        puntosRondaActual: [],
+        historial: [] 
+    };
+
+    function dibujarNombres() {
+        const n = document.getElementById('numJug').value;
+        const cont = document.getElementById('inputsNombres');
+        cont.innerHTML = '<label style="color:var(--oro); font-weight:bold; margin-top:10px; display:block;">Nombres:</label>';
+        for(let i=1; i<=n; i++) {
+            cont.innerHTML += `<input type="text" class="nom-in" placeholder="Jugador ${i}">`;
+        }
+    }
+    dibujarNombres();
+
+    function empezar() {
+        const inputs = document.querySelectorAll('.nom-in');
+        db.jugadores = [];
+        db.historial = [];
+        for(let inp of inputs) {
+            if(!inp.value.trim()) return alert("Por favor, rellena todos los nombres.");
+            db.jugadores.push(inp.value.trim());
+            db.historial.push([]);
+        }
+        
+        const n = db.jugadores.length;
+        const mazoTotal = parseInt(document.getElementById('mazo').value);
+        const max = Math.floor(mazoTotal / n);
+        
+        // Estructura Rondas corregida
+        for(let i=0; i<n; i++) db.rondas.push({c: 1, t: "1 carta"});
+        for(let i=2; i < max; i++) db.rondas.push({c: i, t: "Subida"});
+        for(let i=0; i<n; i++) db.rondas.push({c: max, t: "Todas"});
+        for(let i=max-1; i >= 2; i--) db.rondas.push({c: i, t: "Bajada"});
+        for(let i=0; i<n; i++) db.rondas.push({c: max, t: "Subasta"});
+        for(let i=0; i<n; i++) db.rondas.push({c: 1, t: "Indias"});
+
+        document.getElementById('setup').classList.add('hidden');
+        document.getElementById('game').classList.remove('hidden');
+        resetPuntosRonda();
+        renderRonda();
+    }
+
+    function resetPuntosRonda() {
+        db.puntosRondaActual = db.jugadores.map(() => null);
+    }
+
+    function renderRonda() {
+        const r = db.rondas[db.rondaIdx];
+        const esOros = document.getElementById('esOros').checked;
+        const reparte = db.jugadores[db.rondaIdx % db.jugadores.length];
+        const val10 = esOros ? 20 : 10;
+        const val5 = esOros ? 10 : 5;
+
+        document.getElementById('headerRonda').innerHTML = `Ronda: ${r.t}<br>${reparte} reparte ${r.c}`;
+
+        const cont = document.getElementById('listaJugadores');
+        cont.innerHTML = "";
+
+        db.jugadores.forEach((nom, idx) => {
+            let p = db.puntosRondaActual[idx] || 0;
+            let statusClass = db.puntosRondaActual[idx] === null ? 'pending' : 'done';
+
+            cont.innerHTML += `
+                <div class="player-box ${statusClass}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <b style="font-size:1.1rem">${nom}</b>
+                        <span class="score-badge">Total: ${calcularTotal(idx)}</span>
+                    </div>
+                    <div class="controls">
+                        <button class="btn-plus5" onclick="setPts(${idx}, ${val5})">+${val5}</button>
+                        <div class="stepper">
+                            <button onclick="addPts(${idx}, -${val10})">−</button>
+                            <span>${p > 0 ? '+'+p : p}</span>
+                            <button onclick="addPts(${idx}, ${val10})">+</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function setPts(idx, val) {
+        db.puntosRondaActual[idx] = val;
+        renderRonda();
+    }
+
+    function addPts(idx, val) {
+        if(db.puntosRondaActual[idx] === null) db.puntosRondaActual[idx] = 0;
+        db.puntosRondaActual[idx] += val;
+        renderRonda();
+    }
+
+    function calcularTotal(idx) {
+        return db.historial[idx].reduce((a, b) => a + b, 0);
+    }
+
+    function intentarSiguiente() {
+        let faltan = [];
+        db.puntosRondaActual.forEach((p, i) => {
+            if(p === null) faltan.push(db.jugadores[i]);
+        });
+
+        if(faltan.length > 0) {
+            alert("Falta puntuar a: " + faltan.join(", "));
+            return;
+        }
+
+        db.puntosRondaActual.forEach((p, i) => db.historial[i].push(p));
+
+        if(db.rondaIdx < db.rondas.length - 1) {
+            db.rondaIdx++;
+            document.getElementById('esOros').checked = false;
+            resetPuntosRonda();
+            renderRonda();
+            window.scrollTo(0,0);
+        } else {
+            finalizar();
+        }
+    }
+
+    function finalizar() {
+        document.getElementById('game').classList.add('hidden');
+        document.getElementById('final').classList.remove('hidden');
+        
+        let html = `<table class="history-table"><tr><th>R.</th>`;
+        db.jugadores.forEach(n => html += `<th>${n.substring(0,3)}.</th>`);
+        html += `</tr>`;
+
+        for(let r=0; r < db.rondas.length; r++) {
+            html += `<tr><td>${r+1}</td>`;
+            db.jugadores.forEach((n, jIdx) => {
+                let pts = db.historial[jIdx][r];
+                let color = pts < 0 ? '#ff7675' : (pts > 0 ? '#55efc4' : '#fff');
+                html += `<td style="color:${color}">${pts}</td>`;
+            });
+            html += `</tr>`;
+        }
+        
+        html += `<tr style="background:rgba(255,215,0,0.3); font-weight:bold;"><td>TOT</td>`;
+        db.jugadores.forEach((n, jIdx) => html += `<td>${calcularTotal(jIdx)}</td>`);
+        html += `</tr></table>`;
+        
+        document.getElementById('tablaFinal').innerHTML = html;
+    }
+</script>
+</body>
+</html>

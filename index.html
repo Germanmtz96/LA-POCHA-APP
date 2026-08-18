@@ -1,293 +1,44 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Pocha</title>
-    <link rel="apple-touch-icon" href="https://img.icons8.com/emoji/96/coin-emoji.png">
-    <link rel="icon" type="image/png" href="https://img.icons8.com/emoji/96/coin-emoji.png">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="La Pocha">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#064e3b"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="La Pocha"><title>La Pocha · Marcador</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☀️</text></svg>">
+<script src="https://cdn.tailwindcss.com"></script><script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','ui-sans-serif','system-ui']},colors:{felt:{950:'#022c22',900:'#064e3b'}},boxShadow:{card:'0 20px 50px -20px rgba(0,0,0,.5)'}}}}</script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+html{background:#123f2b}body{-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}.safe{padding-top:max(.75rem,env(safe-area-inset-top));padding-bottom:max(1.25rem,env(safe-area-inset-bottom))}.glass{background:linear-gradient(145deg,rgba(6,35,24,.76),rgba(2,25,17,.64));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.enter{animation:enter .24s ease-out both}@keyframes enter{from{opacity:0;transform:translateY(7px)}}.hidebar::-webkit-scrollbar{display:none}.tap{touch-action:manipulation}#scoreTable{touch-action:pan-x;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}#scoreTable>div:first-child{overflow:visible;min-width:max-content}.felt-table{background-color:#17643f;background-image:radial-gradient(ellipse at 50% -10%,rgba(67,160,105,.7) 0%,rgba(27,112,70,.22) 34%,rgba(5,49,31,.8) 100%),repeating-linear-gradient(36deg,rgba(255,255,255,.018) 0,rgba(255,255,255,.018) 1px,rgba(0,0,0,.018) 1px,rgba(0,0,0,.018) 3px);background-attachment:fixed}.felt-table:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at center,transparent 42%,rgba(0,15,8,.44) 100%);box-shadow:inset 0 0 110px rgba(0,0,0,.3)}.sticky-action{padding-bottom:max(.75rem,env(safe-area-inset-bottom));background:linear-gradient(to top,#073321 62%,transparent)}button:active{transform:scale(.975)}@media(min-width:640px){.safe{padding-top:1.5rem}.sticky-action{position:static!important;background:none;padding:0}}
+#scoreTable.hidden+#scrollHint{display:none}#scoreTable .sticky{position:static}
+</style>
+</head><body class="felt-table min-h-screen text-white antialiased selection:bg-amber-300 selection:text-felt-950">
+<main class="safe relative mx-auto min-h-screen w-full max-w-lg px-4">
+<header class="mb-5 flex items-center justify-between"><button onclick="goHome()" class="tap -ml-1.5 flex items-center gap-3 rounded-[1.35rem] p-1.5 outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"><span class="grid h-11 w-11 place-items-center rounded-2xl border border-amber-100/50 bg-gradient-to-br from-amber-200 to-amber-400 text-felt-950 shadow-lg shadow-black/20"><i data-lucide="sun"></i></span><span class="text-left"><b class="block text-xl font-black tracking-[-.035em]">La Pocha</b><small class="text-emerald-200">Marcador de partidas</small></span></button><button id="historyTop" onclick="showHistory()" class="tap grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/10 shadow-sm backdrop-blur hover:bg-white/15" aria-label="Historial"><i data-lucide="history" class="h-5 w-5"></i></button></header>
 
-    
-     <style>
-        :root {
-            --verde-tapete: #1a4a2e;
-            --verde-claro: #2d7a4d;
-            --oro: #f1c40f;
-            --blanco: #ecf0f1;
-        }
+<section id="home" class="enter space-y-4">
+<div id="resume" class="hidden rounded-3xl border border-amber-200/30 bg-amber-300 p-5 text-felt-950 shadow-card"><div class="mb-3 flex items-start justify-between"><div><p class="text-xs font-extrabold uppercase tracking-[.18em] text-amber-900/60">Partida en curso</p><p id="resumeMeta" class="mt-1 text-sm font-semibold text-amber-950/65"></p></div><span class="grid h-9 w-9 place-items-center rounded-xl bg-amber-950/10"><i data-lucide="save" class="h-5 w-5"></i></span></div><div id="resumePlayers" class="mb-4 divide-y divide-amber-950/10 overflow-hidden rounded-2xl bg-white/25"></div><button onclick="resumeGame()" class="flex w-full items-center justify-center gap-2 rounded-2xl bg-felt-950 px-4 py-3.5 font-bold text-white">Continuar partida <i data-lucide="arrow-right" class="h-5 w-5"></i></button></div>
+<div class="glass overflow-hidden rounded-[2rem] border border-white/10 shadow-card"><div class="relative overflow-hidden px-5 pb-5 pt-6"><div class="absolute -right-8 -top-12 h-36 w-36 rounded-full bg-amber-300/10 blur-2xl"></div><p class="relative text-xs font-bold uppercase tracking-[.18em] text-amber-300">Nueva partida</p><h1 class="relative mt-1 text-[1.7rem] font-black leading-tight tracking-[-.035em]">¿Quién se apunta<br>a una Pocha?</h1><div class="relative mt-3 flex gap-2 text-[11px] font-black"><span class="rounded-full bg-white/10 px-2.5 py-1 text-red-300">♥ COPAS</span><span class="rounded-full bg-white/10 px-2.5 py-1 text-amber-300">● OROS</span><span class="rounded-full bg-white/10 px-2.5 py-1 text-emerald-200">♣ BASTOS</span></div></div><div class="border-t border-white/10 bg-black/10 p-5"><div class="grid grid-cols-[minmax(0,.72fr)_minmax(0,1.28fr)] gap-3"><label class="min-w-0"><span class="mb-2 block text-xs font-bold uppercase tracking-wider text-emerald-100/80">Jugadores</span><select id="count" onchange="renderNames()" class="tap w-full rounded-2xl border border-white/10 bg-felt-950/70 px-3 py-3.5 font-bold outline-none focus:border-amber-300"></select></label><label class="min-w-0"><span class="mb-2 block text-xs font-bold uppercase tracking-wider text-emerald-100/80">Mazo</span><select id="deck" onchange="saveDraft()" class="tap w-full rounded-2xl border border-white/10 bg-felt-950/70 px-4 py-3.5 font-bold outline-none focus:border-amber-300"><option value="32">32 cartas</option><option value="36">36 cartas</option><option value="40" selected>40 cartas</option><option value="48">48 cartas</option></select></label></div><div class="my-5 flex items-center gap-3"><span class="h-px flex-1 bg-white/10"></span><span class="text-[10px] font-black uppercase tracking-[.16em] text-emerald-200/60">Nombres</span><span class="h-px flex-1 bg-white/10"></span></div><div id="names" class="space-y-3"></div><button onclick="startGame()" class="tap mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-300 px-5 py-4 font-black text-felt-950 shadow-lg shadow-black/20">Empezar partida <i data-lucide="arrow-right" class="h-5 w-5"></i></button></div></div>
+<button id="historyButton" onclick="showHistory()" class="hidden w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4"><span class="flex items-center gap-3 font-bold"><i data-lucide="trophy" class="text-amber-300"></i> Partidas anteriores</span><span id="historyCount" class="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold"></span></button>
+</section>
 
-        /* Ajuste global para que nada se salga del contenedor */
-        * { box-sizing: border-box; }
+<section id="game" class="hidden enter space-y-3 pb-28 sm:pb-0"><div class="glass rounded-[2rem] border border-white/10 p-5 shadow-card"><div class="mb-4 flex items-start justify-between"><div><p id="roundCounter" class="text-[11px] font-black uppercase tracking-[.18em] text-amber-300"></p><h2 id="roundTitle" class="mt-1 text-[1.65rem] font-black leading-tight tracking-[-.035em]"></h2><p id="dealer" class="mt-2 flex items-center gap-1.5 text-sm text-emerald-100"></p></div><button onclick="gameMenu()" class="tap grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/10" aria-label="Opciones"><i data-lucide="ellipsis"></i></button></div><div class="flex items-center gap-3"><div class="h-2 flex-1 overflow-hidden rounded-full bg-black/25"><div id="progress" class="h-full rounded-full bg-gradient-to-r from-amber-400 to-yellow-200 transition-all"></div></div><span id="progressText" class="text-xs font-black text-emerald-100"></span></div></div>
+<label class="flex cursor-pointer items-center justify-between rounded-2xl border border-white/10 bg-white/10 px-5 py-4"><span><b class="block">La pinta es oros</b><small class="text-emerald-200">La puntuación vale el doble</small></span><span class="relative"><input id="gold" type="checkbox" onchange="toggleGold()" class="peer sr-only"><span class="block h-7 w-12 rounded-full bg-black/30 peer-checked:bg-amber-300"></span><span class="absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span></span></label>
+<div id="players" class="space-y-3"></div><div class="sticky-action fixed inset-x-0 bottom-0 z-30 mx-auto max-w-lg px-4 pt-8 sm:px-0"><button id="next" onclick="nextRound()" class="tap flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-white to-emerald-50 px-5 py-4 font-black text-felt-950 shadow-2xl shadow-black/40">Guardar y siguiente <i data-lucide="arrow-right"></i></button><p class="mt-2 flex items-center justify-center gap-1.5 text-[11px] text-emerald-200/70"><i data-lucide="save" class="h-3.5 w-3.5"></i> Guardado automático</p></div></section>
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle, var(--verde-claro) 0%, var(--verde-tapete) 100%);
-            color: var(--blanco); margin: 0; padding: 10px;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-        }
+<section id="results" class="hidden enter space-y-4"><div class="rounded-3xl bg-amber-300 p-6 text-felt-950 shadow-card"><span class="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-felt-950 text-amber-300"><i data-lucide="trophy" class="h-8 w-8"></i></span><p class="text-center text-xs font-extrabold uppercase tracking-[.18em] text-amber-900/60">Partida terminada</p><h2 id="winner" class="mt-1 text-center text-3xl font-black"></h2><div id="ranking" class="mt-6 space-y-2"></div></div><div class="glass rounded-3xl border border-white/10 p-5"><div class="flex justify-between"><h3 class="font-black">Detalle de rondas</h3><button id="tableToggle" onclick="toggleTable()" class="text-sm font-bold text-amber-300">Ver tabla</button></div><div id="scoreTable" class="mt-4 hidden w-full overflow-x-auto rounded-2xl"></div><p id="scrollHint" class="mt-3 flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-200/60"><i data-lucide="move-horizontal" class="h-3.5 w-3.5"></i> Desliza para ver más jugadores</p></div><button onclick="goHome()" class="flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 font-black text-felt-950"><i data-lucide="plus"></i> Nueva partida</button></section>
 
-        .container { width: 100%; max-width: 500px; }
-
-        .card {
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 15px; padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-            width: 100%; /* Asegura que no exceda el container */
-        }
-
-        h1 { color: var(--oro); text-align: center; margin: 10px 0; text-shadow: 2px 2px 4px #000; }
-
-        .input-group { width: 100%; margin-bottom: 15px; text-align: left; }
-        
-        /* Estilo corregido para inputs */
-        input[type="text"], input[type="number"], select {
-            width: 100%; 
-            padding: 12px; 
-            margin: 5px 0; 
-            border-radius: 8px; 
-            border: none; 
-            background: rgba(255,255,255,0.9); 
-            font-size: 1rem;
-            color: #000;
-            display: block;
-        }
-
-        .info-header {
-            background: #fff; color: #000; padding: 10px;
-            border-radius: 10px; text-align: center; margin-bottom: 15px; font-weight: bold;
-        }
-
-        .player-box {
-            background: rgba(255,255,255,0.1); padding: 10px;
-            border-radius: 12px; margin-bottom: 10px;
-            border-left: 5px solid transparent;
-        }
-        .player-box.pending { border-left-color: #e74c3c; }
-        .player-box.done { border-left-color: #27ae60; background: rgba(39, 174, 96, 0.1); }
-
-        .controls { display: flex; align-items: center; justify-content: space-around; margin-top: 10px; }
-
-        .stepper { display: flex; align-items: center; background: #333; border-radius: 8px; overflow: hidden; }
-        .stepper button { 
-            background: #444; color: white; border: none; padding: 10px; 
-            font-size: 1.2rem; cursor: pointer; width: 45px;
-        }
-        .stepper span { width: 60px; text-align: center; font-weight: bold; font-size: 1.1rem; }
-
-        .btn-plus5 {
-            background: var(--oro); color: black; border: none; 
-            padding: 10px; border-radius: 8px; font-weight: bold; width: 75px;
-        }
-
-        .history-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.75rem; color: white; }
-        .history-table th, .history-table td { border: 1px solid rgba(255,255,255,0.2); padding: 5px; text-align: center; }
-        .history-table th { background: var(--oro); color: black; }
-
-        .hidden { display: none; }
-        button.main-btn {
-            width: 100%; padding: 15px; background: var(--oro); 
-            color: black; font-weight: bold; border-radius: 8px; border: none;
-            cursor: pointer; margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>🌞 La Pocha</h1>
-
-    <div id="setup" class="card">
-        <div class="input-group">
-            <label style="color:var(--oro); font-weight:bold;">Nº Jugadores:</label>
-            <input type="number" id="numJug" value="4" min="3" max="8" onchange="dibujarNombres()">
-        </div>
-        <div class="input-group">
-            <label style="color:var(--oro); font-weight:bold;">Mazo:</label>
-            <select id="mazo">
-                <option value="32">32 cartas (quitar 2s y 4s)</option>
-                <option value="36">36 cartas (quitar 2s)</option>
-                <option value="40" selected>40 cartas</option>
-                <option value="48">48 cartas</option>
-            </select>
-        </div>
-        <div id="inputsNombres" class="input-group"></div>
-        <button class="main-btn" onclick="empezar()">EMPEZAR PARTIDA</button>
-    </div>
-
-    <div id="game" class="hidden">
-        <div id="headerRonda" class="info-header"></div>
-        
-        <div class="card" style="padding:10px; text-align:center; margin-bottom:15px;">
-            <label style="color:var(--oro); font-weight: bold; font-size: 1.1rem;">🟡 ¿ES OROS? </label>
-            <input type="checkbox" id="esOros" onchange="renderRonda()">
-        </div>
-
-        <div id="listaJugadores"></div>
-        
-        <button class="main-btn" onclick="intentarSiguiente()" style="background: var(--blanco);">SIGUIENTE RONDA →</button>
-    </div>
-
-    <div id="final" class="card hidden">
-        <h2 style="color:var(--oro); text-align:center;">🏆 Resultados</h2>
-        <div id="tablaFinal" style="overflow-x: auto;"></div>
-        <button class="main-btn" onclick="location.reload()">NUEVA PARTIDA</button>
-    </div>
-</div>
-
+<section id="history" class="hidden enter space-y-4"><div class="flex items-center gap-3"><button onclick="goHome()" class="grid h-11 w-11 place-items-center rounded-2xl bg-white/10"><i data-lucide="arrow-left"></i></button><div><p class="text-xs font-bold uppercase tracking-[.18em] text-amber-300">Tu historial</p><h2 class="text-2xl font-black">Partidas anteriores</h2></div></div><div id="historyList" class="space-y-3"></div></section>
+</main>
+<div id="modal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/65 p-4 sm:items-center" onclick="if(event.target===this)closeModal()"><div id="modalPanel" class="w-full max-w-md rounded-3xl bg-white p-5 text-slate-900 shadow-2xl enter"></div></div><div id="toast" class="fixed bottom-6 left-1/2 z-[60] hidden -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-950 px-4 py-2.5 text-sm font-bold"><span id="toastText"></span></div>
 <script>
-    let db = { 
-        rondaIdx: 0, 
-        jugadores: [], 
-        rondas: [], 
-        puntosRondaActual: [],
-        historial: [] 
-    };
-
-    function dibujarNombres() {
-        const n = document.getElementById('numJug').value;
-        const cont = document.getElementById('inputsNombres');
-        cont.innerHTML = '<label style="color:var(--oro); font-weight:bold; margin-top:10px; display:block;">Nombres:</label>';
-        for(let i=1; i<=n; i++) {
-            cont.innerHTML += `<input type="text" class="nom-in" placeholder="Jugador ${i}">`;
-        }
-    }
-    dibujarNombres();
-
-    function empezar() {
-        const inputs = document.querySelectorAll('.nom-in');
-        db.jugadores = [];
-        db.historial = [];
-        for(let inp of inputs) {
-            if(!inp.value.trim()) return alert("Por favor, rellena todos los nombres.");
-            db.jugadores.push(inp.value.trim());
-            db.historial.push([]);
-        }
-        
-        const n = db.jugadores.length;
-        const mazoTotal = parseInt(document.getElementById('mazo').value);
-        const max = Math.floor(mazoTotal / n);
-        
-        // Estructura Rondas corregida
-        for(let i=0; i<n; i++) db.rondas.push({c: 1, t: "1 carta"});
-        for(let i=2; i < max; i++) db.rondas.push({c: i, t: "Subida"});
-        for(let i=0; i<n; i++) db.rondas.push({c: max, t: "Todas"});
-        for(let i=max-1; i >= 2; i--) db.rondas.push({c: i, t: "Bajada"});
-        for(let i=0; i<n; i++) db.rondas.push({c: max, t: "Subasta"});
-        for(let i=0; i<n; i++) db.rondas.push({c: 1, t: "Indias"});
-
-        document.getElementById('setup').classList.add('hidden');
-        document.getElementById('game').classList.remove('hidden');
-        resetPuntosRonda();
-        renderRonda();
-    }
-
-    function resetPuntosRonda() {
-        db.puntosRondaActual = db.jugadores.map(() => null);
-    }
-
-    function renderRonda() {
-        const r = db.rondas[db.rondaIdx];
-        const esOros = document.getElementById('esOros').checked;
-        const reparte = db.jugadores[db.rondaIdx % db.jugadores.length];
-        const val10 = esOros ? 20 : 10;
-        const val5 = esOros ? 10 : 5;
-
-        document.getElementById('headerRonda').innerHTML = `Ronda: ${r.t}<br>${reparte} reparte ${r.c}`;
-
-        const cont = document.getElementById('listaJugadores');
-        cont.innerHTML = "";
-
-        db.jugadores.forEach((nom, idx) => {
-            let p = db.puntosRondaActual[idx] || 0;
-            let statusClass = db.puntosRondaActual[idx] === null ? 'pending' : 'done';
-
-            cont.innerHTML += `
-                <div class="player-box ${statusClass}">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b style="font-size:1.1rem">${nom}</b>
-                        <span class="score-badge">Total: ${calcularTotal(idx)}</span>
-                    </div>
-                    <div class="controls">
-                        <button class="btn-plus5" onclick="setPts(${idx}, ${val5})">+${val5}</button>
-                        <div class="stepper">
-                            <button onclick="addPts(${idx}, -${val10})">−</button>
-                            <span>${p > 0 ? '+'+p : p}</span>
-                            <button onclick="addPts(${idx}, ${val10})">+</button>
-                        </div>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function setPts(idx, val) {
-        db.puntosRondaActual[idx] = val;
-        renderRonda();
-    }
-
-    function addPts(idx, val) {
-        if(db.puntosRondaActual[idx] === null) db.puntosRondaActual[idx] = 0;
-        db.puntosRondaActual[idx] += val;
-        renderRonda();
-    }
-
-    function calcularTotal(idx) {
-        return db.historial[idx].reduce((a, b) => a + b, 0);
-    }
-
-    function intentarSiguiente() {
-        let faltan = [];
-        db.puntosRondaActual.forEach((p, i) => {
-            if(p === null) faltan.push(db.jugadores[i]);
-        });
-
-        if(faltan.length > 0) {
-            alert("Falta puntuar a: " + faltan.join(", "));
-            return;
-        }
-
-        db.puntosRondaActual.forEach((p, i) => db.historial[i].push(p));
-
-        if(db.rondaIdx < db.rondas.length - 1) {
-            db.rondaIdx++;
-            document.getElementById('esOros').checked = false;
-            resetPuntosRonda();
-            renderRonda();
-            window.scrollTo(0,0);
-        } else {
-            finalizar();
-        }
-    }
-
-    function finalizar() {
-        document.getElementById('game').classList.add('hidden');
-        document.getElementById('final').classList.remove('hidden');
-        
-        let html = `<table class="history-table"><tr><th>R.</th>`;
-        db.jugadores.forEach(n => html += `<th>${n.substring(0,3)}.</th>`);
-        html += `</tr>`;
-
-        for(let r=0; r < db.rondas.length; r++) {
-            html += `<tr><td>${r+1}</td>`;
-            db.jugadores.forEach((n, jIdx) => {
-                let pts = db.historial[jIdx][r];
-                let color = pts < 0 ? '#ff7675' : (pts > 0 ? '#55efc4' : '#fff');
-                html += `<td style="color:${color}">${pts}</td>`;
-            });
-            html += `</tr>`;
-        }
-        
-        html += `<tr style="background:rgba(255,215,0,0.3); font-weight:bold;"><td>TOT</td>`;
-        db.jugadores.forEach((n, jIdx) => html += `<td>${calcularTotal(jIdx)}</td>`);
-        html += `</tr></table>`;
-        
-        document.getElementById('tablaFinal').innerHTML = html;
-    }
-</script>
-</body>
-</html>
+const K={active:'lapocha.active.v2',history:'lapocha.history.v2',draft:'lapocha.draft.v2'};let g=null,shown=null,pendingPlayers=null;const $=x=>document.getElementById(x);const parse=(v,f)=>{try{return v?JSON.parse(v):f}catch{return f}};const hist=()=>parse(localStorage.getItem(K.history),[]);const total=(x,i)=>(x.scores[i]||[]).reduce((a,b)=>a+b,0);const esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));const icons=()=>window.lucide&&lucide.createIcons();
+function view(id){['home','game','results','history'].forEach(x=>$(x).classList.toggle('hidden',x!==id));$('historyTop').classList.toggle('hidden',id==='game');scrollTo({top:0,behavior:'smooth'});icons()}function toast(s){$('toastText').textContent=s;$('toast').classList.remove('hidden');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.add('hidden'),1900)}
+function init(){$('count').innerHTML=[3,4,5,6,7,8].map(n=>`<option>${n}</option>`).join('');let d=parse(localStorage.getItem(K.draft),{count:4,deck:40,names:[]});$('count').value=d.count;$('deck').value=d.deck;renderNames(d.names);updateHome();icons()}
+function renderNames(seed){let old=seed||[...document.querySelectorAll('.pname')].map(x=>x.value),n=+$('count').value;$('names').innerHTML=Array.from({length:n},(_,i)=>`<label class="flex items-center gap-3"><span class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 text-sm font-black text-amber-300">${String(i+1).padStart(2,'0')}</span><input class="pname tap h-12 w-full rounded-2xl border border-white/10 bg-felt-950/60 px-4 text-base font-semibold text-white outline-none placeholder:font-normal placeholder:text-emerald-200/35 focus:border-amber-300 focus:ring-2 focus:ring-amber-300/15" value="${esc(old[i]||'')}" oninput="saveDraft()" maxlength="24" placeholder="Jugador ${i+1}" autocomplete="off"></label>`).join('');saveDraft()}function saveDraft(){localStorage.setItem(K.draft,JSON.stringify({count:+$('count').value,deck:+$('deck').value,names:[...document.querySelectorAll('.pname')].map(x=>x.value)}))}
+function updateHome(){let a=parse(localStorage.getItem(K.active),null),h=hist();$('resume').classList.toggle('hidden',!a);if(a){$('resumeMeta').textContent=`Ronda ${a.roundIndex+1} de ${a.rounds.length} · ${a.deckSize} cartas`;$('resumePlayers').innerHTML=a.players.map((name,i)=>{let score=total(a,i);return `<div class="flex items-center justify-between gap-3 px-4 py-2.5"><span class="min-w-0 truncate font-black">${esc(name)}</span><strong class="shrink-0 rounded-full bg-felt-950 px-2.5 py-1 text-sm text-white">${score>0?'+':''}${score} pts</strong></div>`}).join('')}$('historyButton').classList.toggle('hidden',!h.length);$('historyButton').classList.toggle('flex',!!h.length);$('historyCount').textContent=h.length}
+function rounds(n,deck){let m=Math.floor(deck/n),r=[];for(let i=0;i<n;i++)r.push({cards:1,type:'1 carta'});for(let c=2;c<m;c++)r.push({cards:c,type:'Subida'});for(let i=0;i<n;i++)r.push({cards:m,type:'Todas'});for(let c=m-1;c>=2;c--)r.push({cards:c,type:'Bajada'});for(let i=0;i<n;i++)r.push({cards:m,type:'Subasta'});for(let i=0;i<n;i++)r.push({cards:1,type:'Indias'});return r}
+function startGame(){let p=[...document.querySelectorAll('.pname')].map(x=>x.value.trim());if(p.some(x=>!x))return toast('Falta algún nombre');if(new Set(p.map(x=>x.toLowerCase())).size<p.length)return toast('Los nombres deben ser distintos');if(localStorage.getItem(K.active))return replacePrompt(p);create(p)}function create(p){let d=+$('deck').value;g={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),startedAt:new Date().toISOString(),players:p,deckSize:d,rounds:rounds(p.length,d),roundIndex:0,scores:p.map(()=>[]),currentPoints:p.map(()=>null),isGold:false};persist();renderGame();view('game')}function resumeGame(){g=parse(localStorage.getItem(K.active),null);if(!g)return goHome();renderGame();view('game')}function persist(){g.updatedAt=new Date().toISOString();localStorage.setItem(K.active,JSON.stringify(g))}
+function renderGame(){let r=g.rounds[g.roundIndex],dealer=g.players[g.roundIndex%g.players.length],step=g.isGold?20:10,hit=g.isGold?10:5,percent=Math.round((g.roundIndex+1)/g.rounds.length*100);$('roundCounter').textContent=`Ronda ${g.roundIndex+1} de ${g.rounds.length}`;$('roundTitle').textContent=`${r.type} · ${r.cards} ${r.cards===1?'carta':'cartas'}`;$('dealer').innerHTML=`<i data-lucide="hand" class="h-4 w-4"></i> Reparte <strong>${esc(dealer)}</strong>`;$('progress').style.width=`${percent}%`;$('progressText').textContent=`${percent}%`;$('gold').checked=g.isGold;$('players').innerHTML=g.players.map((name,i)=>{let v=g.currentPoints[i],done=v!==null,t=total(g,i);return `<article class="overflow-hidden rounded-[1.6rem] border ${done?'border-emerald-300/30 bg-emerald-300/[.11]':'border-white/10 bg-white/[.085]'} shadow-lg shadow-black/10 transition"><div class="flex items-center justify-between px-4 py-3.5"><div class="flex min-w-0 items-center gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-2xl ${done?'bg-emerald-300 text-felt-950 shadow-md shadow-emerald-950/20':'border border-white/10 bg-white/10 text-emerald-100'} font-black">${done?'<i data-lucide="check" class="h-5 w-5"></i>':esc(name[0].toUpperCase())}</span><div class="min-w-0"><b class="block truncate text-[1.05rem]">${esc(name)}</b><small class="block text-[10px] font-bold uppercase tracking-wider ${done?'text-emerald-200':'text-emerald-200/50'}">${done?'Puntuado':'Por puntuar'}</small></div></div><div class="ml-2 text-right"><small class="block text-[9px] font-black uppercase tracking-wider text-emerald-200/60">Total</small><strong class="text-lg ${t<0?'text-red-300':'text-white'}">${t>0?'+':''}${t}</strong></div></div><div class="grid grid-cols-[1fr_1.3fr] gap-px bg-white/10"><button onclick="setPts(${i},${hit})" class="tap flex min-h-14 items-center justify-center gap-1.5 bg-amber-300 px-2 font-black text-felt-950"><i data-lucide="target" class="h-4 w-4"></i><span><span class="block text-[9px] uppercase tracking-wider opacity-60">Acierta</span>+${hit}</span></button><div class="flex min-h-14 bg-felt-950/70"><button onclick="addPts(${i},-${step})" class="tap grid w-14 place-items-center text-2xl font-light text-red-200" aria-label="Restar ${step}">−</button><span class="grid min-w-14 flex-1 place-items-center border-x border-white/10 text-lg font-black ${v<0?'text-red-300':'text-white'}">${v===null?'—':(v>0?'+':'')+v}</span><button onclick="addPts(${i},${step})" class="tap grid w-14 place-items-center text-2xl font-light text-emerald-200" aria-label="Sumar ${step}">+</button></div></div></article>`}).join('');$('next').innerHTML=g.roundIndex===g.rounds.length-1?'Terminar partida <i data-lucide="trophy" class="h-5 w-5"></i>':'Guardar y siguiente <i data-lucide="arrow-right" class="h-5 w-5"></i>';icons()}
+function toggleGold(){g.isGold=$('gold').checked;persist();renderGame()}function setPts(i,v){g.currentPoints[i]=v;persist();renderGame()}function addPts(i,v){if(g.currentPoints[i]===null)g.currentPoints[i]=0;g.currentPoints[i]+=v;persist();renderGame()}function nextRound(){let missing=g.players.filter((_,i)=>g.currentPoints[i]===null);if(missing.length)return toast(`Falta puntuar a ${missing.join(', ')}`);g.currentPoints.forEach((p,i)=>g.scores[i].push(p));if(g.roundIndex<g.rounds.length-1){g.roundIndex++;g.currentPoints=g.players.map(()=>null);g.isGold=false;persist();renderGame();scrollTo({top:0,behavior:'smooth'})}else finish()}
+function finish(){let done={...g,finishedAt:new Date().toISOString(),totals:g.players.map((_,i)=>total(g,i))},h=hist();h.unshift(done);localStorage.setItem(K.history,JSON.stringify(h.slice(0,50)));localStorage.removeItem(K.active);g=null;showResult(done)}function showResult(x){shown=x;let rank=x.players.map((name,i)=>({name,score:x.totals?.[i]??total(x,i)})).sort((a,b)=>b.score-a.score),win=rank.filter(a=>a.score===rank[0].score).map(a=>a.name);$('winner').textContent=win.length>1?`Empate: ${win.join(' y ')}`:`¡Gana ${win[0]}!`;$('ranking').innerHTML=rank.map((p,i)=>`<div class="flex items-center gap-3 rounded-2xl ${i===0?'bg-felt-950 text-white':'bg-white/35'} px-4 py-3"><b class="w-6 ${i===0?'text-amber-300':''}">${i+1}</b><b class="flex-1">${esc(p.name)}</b><strong class="text-lg">${p.score>0?'+':''}${p.score}</strong></div>`).join('');buildTable(x);$('scoreTable').classList.add('hidden');$('tableToggle').textContent='Ver tabla';view('results')}
+function buildTable(x){let sums=x.players.map(()=>0),tone=v=>v<0?'text-red-300':v>0?'text-emerald-300':'text-white',number=v=>`${v>0?'+':''}${v}`;$('scoreTable').innerHTML=`<div class="overflow-hidden rounded-2xl border border-white/10 bg-felt-950/35"><table class="w-full min-w-[420px] border-separate border-spacing-0 text-sm"><thead><tr class="bg-white/10"><th class="sticky left-0 z-10 border-b border-r border-white/10 bg-[#164d35] px-3 py-3 text-left text-[10px] font-black uppercase tracking-[.14em] text-emerald-200">Ronda</th>${x.players.map((n,i)=>`<th class="border-b border-white/10 px-3 py-3 text-center"><span class="mx-auto mb-1 grid h-7 w-7 place-items-center rounded-full bg-white/10 text-xs font-black text-amber-300">${esc(n.charAt(0).toUpperCase())}</span><span class="block max-w-20 truncate text-[11px] font-black text-white">${esc(n)}</span></th>`).join('')}</tr></thead><tbody>${x.rounds.map((round,r)=>`<tr class="${r%2?'bg-white/[.025]':'bg-transparent'}"><td class="sticky left-0 z-10 border-r border-t border-white/10 ${r%2?'bg-[#0b3927]':'bg-[#0a3424]'} px-3 py-2.5"><span class="block font-black text-white">${String(r+1).padStart(2,'0')}</span><span class="block max-w-20 truncate text-[9px] font-bold uppercase tracking-wider text-emerald-200/55">${esc(round.type)}</span></td>${x.players.map((__,i)=>{sums[i]+=x.scores[i][r]||0;return `<td class="border-t border-white/10 px-3 py-2.5 text-center"><strong class="${tone(sums[i])} text-[15px]">${number(sums[i])}</strong></td>`}).join('')}</tr>`).join('')}</tbody><tfoot><tr class="bg-amber-300"><td class="sticky left-0 z-10 border-r border-amber-950/15 bg-amber-300 px-3 py-3 text-[10px] font-black uppercase tracking-[.12em] text-felt-950">Total</td>${sums.map(v=>`<td class="px-3 py-3 text-center text-base font-black ${v<0?'text-red-800':v>0?'text-emerald-900':'text-felt-950'}">${number(v)}</td>`).join('')}</tr></tfoot></table></div><div class="mt-3 flex items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-wider"><span class="flex items-center gap-1.5 text-emerald-300"><i data-lucide="trending-up" class="h-3.5 w-3.5"></i> Positivo</span><span class="flex items-center gap-1.5 text-red-300"><i data-lucide="trending-down" class="h-3.5 w-3.5"></i> Negativo</span></div>`;icons()}function toggleTable(){let hidden=$('scoreTable').classList.toggle('hidden');$('tableToggle').textContent=hidden?'Ver tabla':'Ocultar'}
+function showHistory(){let h=hist();$('historyList').innerHTML=h.length?h.map(x=>{let s=x.totals||x.players.map((_,i)=>total(x,i)),best=Math.max(...s),win=x.players.filter((_,i)=>s[i]===best).join(' y '),date=new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short',year:'numeric'}).format(new Date(x.finishedAt||x.updatedAt));return `<article class="glass rounded-3xl border border-white/10 p-5"><button onclick="openMatch('${x.id}')" class="w-full text-left"><p class="text-xs font-bold uppercase tracking-[.14em] text-amber-300">${date}</p><div class="flex justify-between"><div><h3 class="mt-1 text-lg font-black">${esc(win)} · ${best>0?'+':''}${best} pts</h3><p class="mt-1 text-sm text-emerald-200">${x.players.map(esc).join(', ')}</p></div><i data-lucide="chevron-right"></i></div></button><button onclick="deleteMatch('${x.id}')" class="mt-4 flex gap-1.5 text-xs font-bold text-red-300"><i data-lucide="trash-2" class="h-4 w-4"></i> Eliminar</button></article>`}).join(''):`<div class="rounded-3xl border border-dashed border-white/20 p-10 text-center"><i data-lucide="inbox" class="mx-auto mb-3"></i><b>Aún no hay partidas terminadas</b></div>`;view('history')}function openMatch(id){let x=hist().find(a=>a.id===id);if(x)showResult(x)}
+function modal(html){$('modalPanel').innerHTML=html;$('modal').classList.remove('hidden');$('modal').classList.add('flex');icons()}function closeModal(){$('modal').classList.add('hidden');$('modal').classList.remove('flex')}function buttons(action,label='Eliminar'){return `<div class="mt-5 grid grid-cols-2 gap-3"><button onclick="closeModal()" class="rounded-2xl bg-slate-100 px-4 py-3 font-bold">Cancelar</button><button onclick="${action}" class="rounded-2xl bg-red-600 px-4 py-3 font-bold text-white">${label}</button></div>`}function replacePrompt(p){pendingPlayers=p;modal(`<h3 class="text-xl font-black">¿Sustituir la partida en curso?</h3><p class="mt-2 text-sm text-slate-600">Se eliminará la partida que estaba a medias.</p>${buttons('confirmReplace()','Sustituir')}`)}function confirmReplace(){let p=pendingPlayers;pendingPlayers=null;closeModal();create(p)}function deleteMatch(id){modal(`<h3 class="text-xl font-black">¿Eliminar esta partida?</h3><p class="mt-2 text-sm text-slate-600">Esta acción no se puede deshacer.</p>${buttons(`localStorage.setItem(K.history,JSON.stringify(hist().filter(x=>x.id!=='${id}')));closeModal();showHistory()`)}`)}function gameMenu(){modal(`<h3 class="text-xl font-black">Opciones de partida</h3><div class="mt-5 space-y-2"><button onclick="closeModal();goHome()" class="flex w-full gap-3 rounded-2xl bg-slate-100 px-4 py-3.5 font-bold"><i data-lucide="house"></i> Salir y continuar después</button><button onclick="abandonPrompt()" class="flex w-full gap-3 rounded-2xl bg-red-50 px-4 py-3.5 font-bold text-red-700"><i data-lucide="trash-2"></i> Abandonar partida</button></div>`)}function abandonPrompt(){modal(`<h3 class="text-xl font-black">¿Abandonar la partida?</h3><p class="mt-2 text-sm text-slate-600">Se borrarán sus puntuaciones.</p>${buttons('abandon()','Abandonar')}`)}function abandon(){localStorage.removeItem(K.active);g=null;closeModal();goHome();toast('Partida eliminada')}function goHome(){g=null;shown=null;updateHome();view('home')}addEventListener('beforeunload',()=>{if(g)persist()});init();
+</script></body></html>
